@@ -1,32 +1,40 @@
 import pandas as pd
 import numpy as np
 
-# Initialize an empty DataFrame
-df = pd.DataFrame(columns=['FC\'s Bid', 'FC\'s Reward', 'CB\'s Bid', 'CB\'s Reward'])
-
 # Define the minimal costs
-FC_min_cost = 400
-CB_min_cost = 300
+FC_MIN_COST = 400
+CB_MIN_COST = 300
+
+# Function to calculate rewards
+def calculate_rewards(FC_bid, CB_bid):
+    if FC_bid < CB_bid:
+        return FC_bid - FC_MIN_COST, 0
+    elif CB_bid < FC_bid:
+        return 0, CB_bid - CB_MIN_COST
+    else:  # In case of a tie, FC wins because of higher quality
+        return FC_bid - FC_MIN_COST, 0
 
 # Run the simulation
-for i in range(1000):  # Run 1000 simulations
-    # Generate random bids
-    FC_bid = np.random.randint(400, 600)
-    CB_bid = np.random.randint(300, 600)
+def run_simulation(num_simulations=10000):
+    results = []
+    for _ in range(num_simulations):
+        # Randomly picking in increments of 10M
+        FC_bid = np.random.randint(41, 60) * 10
+        CB_bid = np.random.randint(31, 60) * 10
+        FC_reward, CB_reward = calculate_rewards(FC_bid, CB_bid)
+        results.append([FC_bid, FC_reward, CB_bid, CB_reward])
+    return results
 
-    # Calculate rewards
-    if FC_bid > CB_bid:
-        FC_reward = FC_bid - FC_min_cost
-        CB_reward = 0
-    elif CB_bid > FC_bid:
-        CB_reward = CB_bid - CB_min_cost
-        FC_reward = 0
-    else:  # In case of a tie, both get 0 reward
-        FC_reward = 0
-        CB_reward = 0
+# Convert the results to a DataFrame
+def results_to_dataframe(results):
+    return pd.DataFrame(results, columns=['FC\'s Bid', 'FC\'s Reward', 'CB\'s Bid', 'CB\'s Reward'])
 
-    # Append the results to the DataFrame
-    df = df.append({'FC\'s Bid': FC_bid, 'FC\'s Reward': FC_reward, 'CB\'s Bid': CB_bid, 'CB\'s Reward': CB_reward}, ignore_index=True)
+# Main function
+def main():
+    results = run_simulation()
+    df = results_to_dataframe(results)
+    df.to_csv("10000runs_monteCarloSimulation.csv",index=True)
+    print(df)
 
-# Print the DataFrame
-print(df)
+if __name__ == "__main__":
+    main()
