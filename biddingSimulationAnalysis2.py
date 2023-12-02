@@ -103,6 +103,8 @@ cb_stats_by_bid['CB Expected Profit'] = cb_stats_by_bid['CB Likelihood of Winnin
 # Find the bid amount that maximizes the expected profit for each company
 fc_optimal_bid_ev = fc_stats_by_bid.loc[fc_stats_by_bid['FC Expected Profit'].idxmax()]
 cb_optimal_bid_ev = cb_stats_by_bid.loc[cb_stats_by_bid['CB Expected Profit'].idxmax()]
+fc_optimal_bid_ev.to_csv("fc_optimal_bid_ev.csv")
+cb_optimal_bid_ev.to_csv("cb_optimal_bid_ev.csv")
 print("Fair Construction's optimal bid is: " + str(fc_optimal_bid_ev))
 print("Cutthroat Builder's optimal bid is: " + str(cb_optimal_bid_ev))
 
@@ -126,12 +128,9 @@ for line in cb_stats_by_bid.itertuples():
     plt.text(line[0], line[-1], f'{round(line[-1])}')
 
 # Add title and labels
-plt.title('Expected Reward for Each Bid per Company')
+plt.title('Expected Reward (median x win likelihood) vs Bid Amount')
 plt.xlabel('Bid Amount (Million Yuan)')
 plt.ylabel('Expected Reward (Million Yuan)')
 
 # Show the plot
 plt.show()
-breakpoint()
-
-
